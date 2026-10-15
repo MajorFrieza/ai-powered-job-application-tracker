@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Job Tracker{% endblock %}
+
+{% block content %}
+<div class="mx-auto text-center" style="max-width: 640px;">
+    <h1 class="mb-3">Keep your job search organized</h1>
+    <p class="lead text-secondary">Track applications, follow your progress, and prepare for the next opportunity.</p>
+    {% if user.is_authenticated %}
+        <p class="mt-4">You’re signed in. Your application board will be built in a later milestone.</p>
+    {% else %}
+        <div class="d-flex justify-content-center gap-2 mt-4">
+            <a class="btn btn-primary" href="{% url 'signup' %}">Create an account</a>
+            <a class="btn btn-outline-primary" href="{% url 'login' %}">Log in</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
