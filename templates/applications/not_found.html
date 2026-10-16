@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Application not found · Job Tracker{% endblock %}
+
+{% block content %}
+<div class="alert alert-info" role="alert">
+    <h1 class="h4">Application not found</h1>
+    <p class="mb-0">It may have been deleted, or it may not belong to your account.</p>
+</div>
+<a class="btn btn-outline-primary" href="{% url 'application-list-page' %}">Back to applications</a>
+{% endblock %}

@@ -1,2 +1,7 @@
 Django>=5.2,<5.3
 python-dotenv>=1.0,<2.0
+djangorestframework>=3.16,<3.17
+pymongo>=4.15,<5
+google-genai>=1.0,<2
+gunicorn>=23,<24
+whitenoise>=6.9,<7

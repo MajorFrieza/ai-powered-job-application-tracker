@@ -1,0 +1,15 @@
+<section class="status-summary" aria-label="Application counts by status">
+    {% for status, count in status_counts.items %}
+        <div class="status-summary-item" data-summary-status="{{ status }}" style="--status-color: var(--status-{{ status|lower }})">
+            <div class="status-summary-label">
+                <span class="status-dot"></span>
+                <span>{{ status }}</span>
+                <span class="status-summary-index">0{{ forloop.counter }}</span>
+            </div>
+            <span class="status-summary-count" data-summary-count>{{ count|stringformat:"02d" }}</span>
+            <span class="status-summary-caption">
+                {% if status == "Applied" %}in the pipeline{% elif status == "Interview" %}conversations started{% elif status == "Offer" %}a new possibility{% else %}on to the next{% endif %}
+            </span>
+        </div>
+    {% endfor %}
+</section>

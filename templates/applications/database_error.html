@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %}Database unavailable · Job Tracker{% endblock %}
+
+{% block content %}
+<div class="alert alert-warning" role="alert">
+    <h1 class="h4">Can’t reach the application database</h1>
+    <p class="mb-0">Check that MongoDB is running and that your <code>MONGODB_URI</code> is set in <code>.env</code>, then restart the server and try again.</p>
+</div>
+{% endblock %}

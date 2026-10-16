@@ -1,0 +1,30 @@
+<div class="modal fade" id="add-application-modal" tabindex="-1" aria-labelledby="add-application-title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <form method="post" action="{% url 'application-create-page' %}">
+                {% csrf_token %}
+                <input type="hidden" name="return_to" value="{{ return_to }}">
+                <div class="modal-header align-items-start">
+                    <div>
+                        <h2 class="modal-title" id="add-application-title">New application</h2>
+                        <p class="modal-subtitle mb-0">A new opportunity starts here.</p>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% for field in add_form %}
+                        <div class="mb-3">
+                            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-brand btn-sm">Add application</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

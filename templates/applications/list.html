@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Applications · Folio{% endblock %}
+
+{% block content %}
+<header class="page-heading">
+    <div>
+        <p class="eyebrow">✦ One step closer</p>
+        <h1>Your next chapter.</h1>
+        <p class="page-subtitle">Good opportunities deserve a little organization.</p>
+    </div>
+    <button class="btn btn-brand" type="button" data-bs-toggle="modal" data-bs-target="#add-application-modal">
+        <span class="plus" aria-hidden="true">+</span>Add application
+    </button>
+</header>
+
+{% include "applications/_status_summary.html" %}
+
+<div class="board-toolbar">
+    <nav class="view-switch" aria-label="Application view">
+        <a href="{% url 'kanban-board' %}">▥ &nbsp;Board</a>
+        <a class="active" href="{% url 'application-list-page' %}" aria-current="page">☷ &nbsp;List</a>
+    </nav>
+    <span class="application-total">{{ total_applications }} application{{ total_applications|pluralize }}</span>
+    <span class="toolbar-spacer"></span>
+    <input class="form-control form-control-sm search-control" type="search" placeholder="⌕  Search applications…" aria-label="Search applications" data-application-search>
+    <select class="form-select form-select-sm filter-control" aria-label="Filter by status" data-status-filter>
+        <option value="">All applications</option>
+        {% for status in statuses %}<option value="{{ status }}">{{ status }}</option>{% endfor %}
+    </select>
+</div>
+
+{% if applications %}
+    <div id="application-list" class="application-table-wrap">
+        <table class="table application-table">
+            <thead>
+                <tr><th scope="col">Company &amp; role</th><th scope="col">Job link</th><th scope="col">Date applied</th><th scope="col">Status</th><th scope="col"><span class="visually-hidden">Actions</span></th></tr>
+            </thead>
+            <tbody>
+                {% for application in applications %}
+                    <tr
+                        data-application-row
+                        data-status="{{ application.status }}"
+                        data-search="{{ application.company|lower }} {{ application.role|lower }} {{ application.notes|lower }}"
+                    >
+                        <td>
+                            <div class="card-company-row">
+                                <span class="company-mark" aria-hidden="true">{{ application.company|first|upper }}</span>
+                                <span>{{ application.company }}<span class="table-role">{{ application.role }}</span></span>
+                            </div>
+                        </td>
+                        <td>
+                            {% if application.job_link %}<a href="{{ application.job_link }}" target="_blank" rel="noopener noreferrer">View posting ↗</a>{% else %}<span class="text-secondary">—</span>{% endif %}
+                        </td>
+                        <td class="text-secondary small">{{ application.date_applied }}</td>
+                        <td>
+                            <select class="form-select form-select-sm status-select" data-status="{{ application.status }}" data-status-url="{% url 'application-status' application_id=application.id %}" aria-label="Status for {{ application.company }}">
+                                {% for status in statuses %}<option value="{{ status }}" {% if status == application.status %}selected{% endif %}>{{ status }}</option>{% endfor %}
+                            </select>
+                        </td>
+                        <td class="text-end">
+                            <div class="dropdown">
+                                <button class="card-menu" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Actions for {{ application.company }}">···</button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="{% url 'application-edit-page' application_id=application.id %}">Edit</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><form method="post" action="{% url 'application-delete-page' application_id=application.id %}" onsubmit="return confirm('Delete this application?');">{% csrf_token %}<button class="dropdown-item text-danger" type="submit">Delete</button></form></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <p class="empty-filter-state d-none text-secondary text-center py-4 mb-0" data-filter-empty>No matching applications.</p>
+    </div>
+{% else %}
+    <div class="empty-state">
+        <h2>No applications yet</h2>
+        <p>Add the first job you’ve applied to and start tracking your search.</p>
+        <button class="btn btn-brand" type="button" data-bs-toggle="modal" data-bs-target="#add-application-modal">Add your first application</button>
+    </div>
+{% endif %}
+
+{% include "applications/_add_modal.html" %}
+<script src="{% static 'applications/application-filters.js' %}" defer></script>
+<script src="{% static 'applications/status-select.js' %}" defer></script>
+{% endblock %}

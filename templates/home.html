@@ -1,18 +1,66 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Job Tracker{% endblock %}
+{% block title %}{% if user.is_authenticated %}Dashboard{% else %}Job Tracker{% endif %}{% endblock %}
 
 {% block content %}
-<div class="mx-auto text-center" style="max-width: 640px;">
-    <h1 class="mb-3">Keep your job search organized</h1>
-    <p class="lead text-secondary">Track applications, follow your progress, and prepare for the next opportunity.</p>
-    {% if user.is_authenticated %}
-        <p class="mt-4">You’re signed in. Your application board will be built in a later milestone.</p>
-    {% else %}
-        <div class="d-flex justify-content-center gap-2 mt-4">
-            <a class="btn btn-primary" href="{% url 'signup' %}">Create an account</a>
-            <a class="btn btn-outline-primary" href="{% url 'login' %}">Log in</a>
+{% if user.is_authenticated %}
+    <header class="page-heading">
+        <div>
+            <p class="eyebrow">✦ One step closer</p>
+            <h1>The bigger picture.</h1>
+            <p class="page-subtitle">Every application is a step in the right direction.</p>
         </div>
-    {% endif %}
-</div>
+        <button class="btn btn-brand" type="button" data-bs-toggle="modal" data-bs-target="#add-application-modal">
+            <span class="plus" aria-hidden="true">+</span>Add application
+        </button>
+    </header>
+
+    {% include "applications/_status_summary.html" %}
+
+    <section class="overview-section" aria-labelledby="snapshot-heading">
+        <div class="overview-section-heading">
+            <h2 id="snapshot-heading">Search snapshot</h2>
+            <span class="application-total">{{ total_applications }} applications total</span>
+        </div>
+        {% for status, count in status_counts.items %}
+            <div class="progress-row">
+                <span class="progress-label" style="--status-color: var(--status-{{ status|lower }})"><i class="status-dot"></i>{{ status }}</span>
+                <span class="progress-track"><span class="progress-value" style="display:block;width:{% if total_applications %}{% widthratio count total_applications 100 %}{% else %}0{% endif %}%"></span></span>
+                <span class="progress-count">{{ count }}</span>
+            </div>
+        {% empty %}
+            <p class="text-secondary">No application data yet.</p>
+        {% endfor %}
+    </section>
+
+    <section class="overview-section" aria-labelledby="latest-heading">
+        <div class="overview-section-heading">
+            <h2 id="latest-heading">Latest applications</h2>
+            <a href="{% url 'kanban-board' %}">View board &nbsp;→</a>
+        </div>
+        {% for application in recent_applications %}
+            <div class="latest-row">
+                <span class="latest-company">{{ application.company }}<span class="latest-role">{{ application.role }}</span></span>
+                <span class="latest-date">{{ application.date_applied }}</span>
+                <span class="status-pill" data-status="{{ application.status }}">{{ application.status }}</span>
+                <a href="{% url 'application-edit-page' application_id=application.id %}" aria-label="Edit {{ application.company }}">↗</a>
+            </div>
+        {% empty %}
+            <p class="text-secondary py-3">Your latest applications will appear here.</p>
+        {% endfor %}
+    </section>
+    {% include "applications/_add_modal.html" %}
+{% else %}
+    <div class="landing-hero">
+        <p class="eyebrow">✦ Your next chapter starts here</p>
+        <h1>Keep your job search<br>moving forward.</h1>
+        <p class="page-subtitle">Good opportunities deserve a little organization.</p>
+        <div class="d-flex justify-content-center gap-2 mt-4">
+            <a class="btn btn-brand" href="{% url 'signup' %}">Create an account</a>
+            <a class="btn btn-outline-secondary" href="{% url 'login' %}">Log in</a>
+        </div>
+    </div>
+{% endif %}
+<script src="{% static 'applications/application-filters.js' %}" defer></script>
 {% endblock %}

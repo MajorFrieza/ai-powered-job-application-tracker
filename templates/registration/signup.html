@@ -3,9 +3,11 @@
 {% block title %}Sign up · Job Tracker{% endblock %}
 
 {% block content %}
-<div class="card shadow-sm mx-auto" style="max-width: 480px;">
-    <div class="card-body p-4">
-        <h1 class="h3 mb-4">Create your account</h1>
+<section class="auth-page">
+    <div class="auth-card">
+        <p class="eyebrow">Your next chapter</p>
+        <h1>Create your account</h1>
+        <p class="auth-intro">A little organization for your next career move.</p>
         <form method="post">
             {% csrf_token %}
             {% for field in form %}
@@ -13,16 +15,16 @@
                     <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
                     {{ field }}
                     {% if field.help_text %}
-                        <div class="form-text">{{ field.help_text }}</div>
+                        <div class="form-text auth-help-text">{{ field.help_text }}</div>
                     {% endif %}
                     {% for error in field.errors %}
-                        <div class="text-danger small mt-1">{{ error }}</div>
+                        <div class="text-danger mt-1">{{ error }}</div>
                     {% endfor %}
                 </div>
             {% endfor %}
-            <button class="btn btn-primary w-100" type="submit">Sign up</button>
+            <button class="btn btn-brand auth-submit w-100" type="submit">Sign up</button>
         </form>
-        <p class="text-secondary mt-3 mb-0">Already registered? <a href="{% url 'login' %}">Log in</a>.</p>
+        <p class="auth-switch">Already registered? <a href="{% url 'login' %}">Log in</a></p>
     </div>
-</div>
+</section>
 {% endblock %}

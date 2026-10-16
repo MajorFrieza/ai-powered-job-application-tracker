@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Applications · Folio{% endblock %}
+
+{% block content %}
+<header class="page-heading">
+    <div>
+        <p class="eyebrow">✦ One step closer</p>
+        <h1>Your next chapter.</h1>
+        <p class="page-subtitle">Good opportunities deserve a little organization.</p>
+    </div>
+    <button class="btn btn-brand" type="button" data-bs-toggle="modal" data-bs-target="#add-application-modal">
+        <span class="plus" aria-hidden="true">+</span>Add application
+    </button>
+</header>
+
+{% include "applications/_status_summary.html" %}
+
+<div class="board-toolbar">
+    <nav class="view-switch" aria-label="Application view">
+        <a class="active" href="{% url 'kanban-board' %}" aria-current="page">▥ &nbsp;Board</a>
+        <a href="{% url 'application-list-page' %}">☷ &nbsp;List</a>
+    </nav>
+    <span class="application-total">{{ total_applications }} application{{ total_applications|pluralize }}</span>
+    <span class="toolbar-spacer"></span>
+    <input class="form-control form-control-sm search-control" type="search" placeholder="⌕  Search applications…" aria-label="Search applications" data-application-search>
+    <select class="form-select form-select-sm filter-control" aria-label="Filter by status" data-status-filter>
+        <option value="">All applications</option>
+        {% for status in statuses %}<option value="{{ status }}">{{ status }}</option>{% endfor %}
+    </select>
+</div>
+
+<div id="board-message" class="alert d-none" role="status" aria-live="polite"></div>
+<div id="application-board" class="application-board" aria-label="Applications by status">
+    {% for status in statuses %}
+        <section class="board-column" data-status="{{ status }}">
+            <div class="board-column-heading">
+                <span class="status-dot" style="--status-color: var(--status-{{ status|lower }})"></span>
+                <h2>{{ status }}</h2>
+                <span class="badge rounded-pill" data-count>0</span>
+                <button class="column-add ms-auto" type="button" data-bs-toggle="modal" data-bs-target="#add-application-modal" data-add-status="{{ status }}" aria-label="Add {{ status }} application">+</button>
+            </div>
+            <div class="board-column-cards" data-cards aria-label="{{ status }} applications"></div>
+        </section>
+    {% endfor %}
+</div>
+
+{% include "applications/_add_modal.html" %}
+<script src="{% static 'applications/board.js' %}" defer></script>
+<script src="{% static 'applications/application-filters.js' %}" defer></script>
+{% endblock %}

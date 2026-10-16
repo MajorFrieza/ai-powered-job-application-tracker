@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }} · Job Tracker{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm mx-auto" style="max-width: 720px;">
+    <div class="card-body p-4">
+        <h1 class="h3 mb-4">{{ page_title }}</h1>
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="mb-3">
+                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% for error in field.errors %}
+                        <div class="text-danger small mt-1">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+            {% endif %}
+            <div class="d-flex gap-2">
+                <button class="btn btn-primary" type="submit">Save application</button>
+                <a class="btn btn-outline-secondary" href="{% url 'application-list-page' %}">Cancel</a>
+            </div>
+        </form>
+        {% if application_id %}
+            <hr class="my-4">
+            <section aria-labelledby="analysis-heading">
+                <h2 class="h5" id="analysis-heading">Job description analysis</h2>
+                <p class="text-secondary small">Paste the description above, then analyze it. The result will be saved with this application.</p>
+                <form id="analysis-form" data-endpoint="{% url 'application-analyze' application_id=application_id %}">
+                    {% csrf_token %}
+                    <button class="btn btn-outline-primary" type="submit">Analyze with AI</button>
+                    <span id="analysis-error" class="text-danger small ms-2" role="alert"></span>
+                </form>
+                <div id="analysis-result" class="mt-3" aria-live="polite">
+                    {% if analysis %}
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h3 class="h6">Summary</h3>
+                                <p>{{ analysis.summary }}</p>
+                                <h3 class="h6">Required skills</h3>
+                                <ul>{% for skill in analysis.required_skills %}<li>{{ skill }}</li>{% endfor %}</ul>
+                                <h3 class="h6">Skills to highlight</h3>
+                                <ul class="mb-0">{% for skill in analysis.skills_to_highlight %}<li>{{ skill }}</li>{% endfor %}</ul>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </section>
+            {% load static %}
+            <script src="{% static 'applications/analyze.js' %}" defer></script>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

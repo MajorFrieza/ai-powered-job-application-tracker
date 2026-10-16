@@ -25,7 +25,7 @@ class AuthenticationTests(TestCase):
             reverse('login'),
             {'username': 'applicant', 'password': 'StrongPassword!42'},
         )
-        self.assertRedirects(login_response, reverse('home'))
+        self.assertRedirects(login_response, reverse('home'), fetch_redirect_response=False)
 
         logout_response = self.client.post(reverse('logout'))
         self.assertRedirects(logout_response, reverse('login'))

@@ -16,10 +16,24 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-from django.views.generic import TemplateView
+
+from applications.views import (
+    application_create_page,
+    application_delete_page,
+    application_edit_page,
+    application_list_page,
+    dashboard_page,
+    kanban_board_page,
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('applications/', application_list_page, name='application-list-page'),
+    path('board/', kanban_board_page, name='kanban-board'),
+    path('applications/new/', application_create_page, name='application-create-page'),
+    path('applications/<str:application_id>/edit/', application_edit_page, name='application-edit-page'),
+    path('applications/<str:application_id>/delete/', application_delete_page, name='application-delete-page'),
+    path('api/', include('applications.urls')),
     path('accounts/', include('accounts.urls')),
-    path('', TemplateView.as_view(template_name='home.html'), name='home'),
+    path('', dashboard_page, name='home'),
 ]
